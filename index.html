@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Personal Gym</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <section id="view-home" class="view">
+        <header>
+            <h1>Entrenamiento</h1>
+        </header>
+        <div id="lista-rutinas">
+            </div>
+        <button class="btn-main" onclick="crearRutina()">+ Nueva Rutina</button>
+    </section>
+
+    <section id="view-profile" class="view" style="display:none;">
+        <header>
+            <h1>Perfil y Medidas</h1>
+        </header>
+        <div class="card">
+            <h3>Peso Corporal</h3>
+            <ul id="historial-peso" style="list-style: none; padding: 0;"></ul>
+        </div>
+        <button class="btn-main" onclick="registrarPesoCorporal()">+ Registrar Peso</button>
+    </section>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="mostrarVista('home')">🏠<br>Inicio</a>
+        <a href="#" class="nav-item" onclick="mostrarVista('profile')">👤<br>Perfil</a>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
