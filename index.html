@@ -3,36 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Personal Gym</title>
+    <title>PowerLog Pro</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <section id="view-home" class="view">
-        <header>
-            <h1>Entrenamiento</h1>
-        </header>
-        <div id="lista-rutinas">
+        <header><h1>Mis Rutinas</h1></header>
+        <div id="lista-rutinas"></div>
+        <button class="btn-main" onclick="abrirModalCrear()">+ Nueva Rutina</button>
+        <h2 style="margin-top:30px">Historial Reciente</h2>
+        <div id="historial-entrenos"></div>
+    </section>
+
+    <section id="view-train" class="view" style="display:none;">
+        <header class="train-header">
+            <div class="header-top">
+                <button onclick="confirmarSalida()" class="btn-back">✕</button>
+                <button class="btn-finish" onclick="finalizarEntreno()">Terminar</button>
             </div>
-        <button class="btn-main" onclick="crearRutina()">+ Nueva Rutina</button>
+            <h2 id="nombre-entreno-actual">Entreno</h2>
+        </header>
+        
+        <div id="ejercicios-en-vivo"></div>
+        
+        <div class="card cardio-section">
+            <h3 style="color:#FF2D55; margin-bottom:15px">🏃‍♂️ Resumen de Cardio</h3>
+            <div class="cardio-grid">
+                <div class="cardio-box">
+                    <label>MINUTOS</label>
+                    <input type="number" id="cardio-min" value="0">
+                </div>
+                <div class="cardio-box">
+                    <label>KCAL TOTALES</label>
+                    <input type="number" id="cardio-kcal" value="0">
+                </div>
+            </div>
+        </div>
     </section>
 
     <section id="view-profile" class="view" style="display:none;">
-        <header>
-            <h1>Perfil y Medidas</h1>
-        </header>
+        <header><h1>Progreso</h1></header>
         <div class="card">
-            <h3>Peso Corporal</h3>
-            <ul id="historial-peso" style="list-style: none; padding: 0;"></ul>
+            <small>Evolución Peso Corporal</small>
+            <canvas id="graficaPeso"></canvas>
+        </div>
+        <div class="card">
+            <small>Intensidad Cardio (Kcal vs Min)</small>
+            <canvas id="graficaCardio"></canvas>
+        </div>
+        <div class="card">
+            <small>Evolución por Ejercicio (Serie Máxima)</small>
+            <select id="select-ejercicio-grafica" onchange="updateChartRendimiento()"></select>
+            <canvas id="graficaRendimiento"></canvas>
         </div>
         <button class="btn-main" onclick="registrarPesoCorporal()">+ Registrar Peso</button>
     </section>
 
+    <div id="modal-detalles" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <div id="contenido-modal"></div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="mostrarVista('home')">🏠<br>Inicio</a>
-        <a href="#" class="nav-item" onclick="mostrarVista('profile')">👤<br>Perfil</a>
+        <div class="nav-item active" onclick="mostrarVista('home', this)">🏠<span>Inicio</span></div>
+        <div class="nav-item" onclick="mostrarVista('profile', this)">📈<span>Progreso</span></div>
     </nav>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB_Yqin_oIhH62P8IX5GrMS_Var-1t4r44",
+            authDomain: "migymapp-ba994.firebaseapp.com",
+            databaseURL: "https://migymapp-ba994-default-rtdb.firebaseio.com",
+            projectId: "migymapp-ba994",
+            storageBucket: "migymapp-ba994.firebasestorage.app",
+            messagingSenderId: "313808021622",
+            appId: "1:313808021622:web:392d391294abb918695757",
+            measurementId: "G-V0B8HRJX6M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.cloud_db = database;
+        window.cloud_ref = ref;
+        window.cloud_set = set;
+
+        // Escuchar datos de la nube
+        onValue(ref(database, 'mi_usuario_gym'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.db = data;
+                if (typeof window.renderHome === 'function') window.renderHome();
+            }
+        });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>
